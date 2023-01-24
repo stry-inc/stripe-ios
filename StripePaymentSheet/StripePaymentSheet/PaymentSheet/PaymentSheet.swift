@@ -38,33 +38,42 @@ public class PaymentSheet {
     
     /// The most recent error encountered by the customer, if any.
     public private(set) var mostRecentError: Error?
+
+    private let applePayButtonTapped: () -> Void
+    private let setUpButtonTapped: () -> Void
     
     /// Initializes a PaymentSheet
     /// - Parameter paymentIntentClientSecret: The [client secret](https://stripe.com/docs/api/payment_intents/object#payment_intent_object-client_secret) of a Stripe PaymentIntent object
     /// - Note: This can be used to complete a payment - don't log it, store it, or expose it to anyone other than the customer.
     /// - Parameter configuration: Configuration for the PaymentSheet. e.g. your business name, Customer details, etc.
-    public convenience init(paymentIntentClientSecret: String, configuration: Configuration) {
+    public convenience init(paymentIntentClientSecret: String, configuration: Configuration, applePayButtonTapped: @escaping () -> Void, setUpButtonTapped: @escaping () -> Void) {
         self.init(
             intentClientSecret: .paymentIntent(clientSecret: paymentIntentClientSecret),
-            configuration: configuration
+            configuration: configuration,
+            applePayButtonTapped: applePayButtonTapped,
+            setUpButtonTapped: setUpButtonTapped
         )
     }
     
     /// Initializes a PaymentSheet
     /// - Parameter setupIntentClientSecret: The [client secret](https://stripe.com/docs/api/setup_intents/object#setup_intent_object-client_secret) of a Stripe SetupIntent object
     /// - Parameter configuration: Configuration for the PaymentSheet. e.g. your business name, Customer details, etc.
-    public convenience init(setupIntentClientSecret: String, configuration: Configuration) {
+    public convenience init(setupIntentClientSecret: String, configuration: Configuration, applePayButtonTapped: @escaping () -> Void, setUpButtonTapped: @escaping () -> Void) {
         self.init(
             intentClientSecret: .setupIntent(clientSecret: setupIntentClientSecret),
-            configuration: configuration
+            configuration: configuration,
+            applePayButtonTapped: applePayButtonTapped,
+            setUpButtonTapped: setUpButtonTapped
         )
     }
     
-    required init(intentClientSecret: IntentClientSecret, configuration: Configuration) {
+    required init(intentClientSecret: IntentClientSecret, configuration: Configuration, applePayButtonTapped: @escaping () -> Void, setUpButtonTapped: @escaping () -> Void) {
         AnalyticsHelper.shared.generateSessionID()
         STPAnalyticsClient.sharedClient.addClass(toProductUsageIfNecessary: PaymentSheet.self)
         self.intentClientSecret = intentClientSecret
         self.configuration = configuration
+        self.applePayButtonTapped = applePayButtonTapped
+        self.setUpButtonTapped = setUpButtonTapped
         STPAnalyticsClient.sharedClient.logPaymentSheetInitialized(configuration: configuration)
     }
     
@@ -128,7 +137,9 @@ public class PaymentSheet {
                         configuration: self.configuration,
                         isApplePayEnabled: isApplePayEnabled,
                         isLinkEnabled: isLinkEnabled,
-                        delegate: self
+                        delegate: self,
+                        applePayButtonTapped: self.applePayButtonTapped,
+                        setUpButtonTapped: self.setUpButtonTapped
                     )
 
                     // Workaround to silence a warning in the Catalyst target

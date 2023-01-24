@@ -152,11 +152,15 @@ class PaymentSheetViewController: UIViewController {
             applePayButtonType: configuration.applePay?.buttonType ?? .plain,
             appearance: configuration.appearance,
             didTap: { [weak self] in
+                self?.setUpButtonTapped()
                 self?.didTapBuyButton()
             }
         )
         return button
     }()
+
+    private let applePayButtonTapped: () -> Void
+    private let setUpButtonTapped: () -> Void
 
     // MARK: - Init
 
@@ -170,7 +174,9 @@ class PaymentSheetViewController: UIViewController {
         configuration: PaymentSheet.Configuration,
         isApplePayEnabled: Bool,
         isLinkEnabled: Bool,
-        delegate: PaymentSheetViewControllerDelegate
+        delegate: PaymentSheetViewControllerDelegate,
+        applePayButtonTapped: @escaping () -> Void,
+        setUpButtonTapped: @escaping () -> Void
     ) {
         self.intent = intent
         self.savedPaymentMethods = savedPaymentMethods
@@ -178,6 +184,8 @@ class PaymentSheetViewController: UIViewController {
         self.isApplePayEnabled = isApplePayEnabled
         self.isLinkEnabled = isLinkEnabled
         self.delegate = delegate
+        self.applePayButtonTapped = applePayButtonTapped
+        self.setUpButtonTapped = setUpButtonTapped
 
         if savedPaymentMethods.isEmpty {
             self.mode = .addingNew
@@ -493,6 +501,7 @@ extension PaymentSheetViewController: WalletHeaderViewDelegate {
 
     func walletHeaderViewApplePayButtonTapped(_ header: WalletHeaderView) {
         set(error: nil)
+        applePayButtonTapped()
         pay(with: .applePay)
     }
 
