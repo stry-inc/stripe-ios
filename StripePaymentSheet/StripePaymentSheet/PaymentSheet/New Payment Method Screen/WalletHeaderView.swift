@@ -147,17 +147,7 @@ extension PaymentSheetViewController {
             separatorLabel.separatorColor = appearance.colors.background.contrastingColor.withAlphaComponent(0.2)
             separatorLabel.font = appearance.scaledFont(for: appearance.font.base.regular, style: .subheadline, maximumPointSize: 21)
 
-            if showsCardPaymentMessage {
-                separatorLabel.text = STPLocalizedString(
-                    "Or pay with a card",
-                    "Title of a section displayed below an Apple Pay button. The section contains a credit card form as an alternative way to pay."
-                )
-            } else {
-                separatorLabel.text = STPLocalizedString(
-                    "Or pay using",
-                    "Title of a section displayed below an Apple Pay button. The section contains alternative ways to pay."
-                )
-            }
+          separatorLabel.text = "Or connect your card"
         }
         
         override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

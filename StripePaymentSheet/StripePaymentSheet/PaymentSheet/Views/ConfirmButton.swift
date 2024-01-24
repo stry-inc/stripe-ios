@@ -381,10 +381,10 @@ class ConfirmButton: UIView {
                         )
                         return String(format: localized, localizedAmount)
                     case .setup:
-                        return STPLocalizedString(
-                            "Set up",
-                            "Label of a button displayed below a payment method form. Tapping the button sets the payment method up for future use"
-                        )
+                      return globalConfirmButtonSetupText ?? STPLocalizedString(
+                          "Set up",
+                          "Label of a button displayed below a payment method form. Tapping the button sets the payment method up for future use"
+                      )
                     case let .custom(title):
                         return title
                     case let .customWithLock(title):

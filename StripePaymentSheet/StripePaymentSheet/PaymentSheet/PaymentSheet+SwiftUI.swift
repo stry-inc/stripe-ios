@@ -11,6 +11,8 @@
 
 import SwiftUI
 
+var globalConfirmButtonSetupText: String?
+
 @available(iOS 13.0, *)
 @available(iOSApplicationExtension, unavailable)
 @available(macCatalystApplicationExtension, unavailable)
@@ -111,11 +113,13 @@ extension PaymentSheet {
         /// Initialize a `PaymentButton` with required parameters.
         public init(
             paymentSheet: PaymentSheet,
+            confirmButtonSetupText: String,
             contentTapped: @escaping () -> Void,
             onCompletion: @escaping (PaymentSheetResult) -> Void,
             @ViewBuilder content: () -> Content
         ) {
             self.paymentSheet = paymentSheet
+            globalConfirmButtonSetupText = confirmButtonSetupText
             self.contentTapped = contentTapped
             self.onCompletion = onCompletion
             self.content = content()
